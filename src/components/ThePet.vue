@@ -8,14 +8,19 @@
                 {{question}}
             </div>
             <v-btn @click="fetch_question" text="更新题目"/>
+            <fetch-audio  v-if="quizId!= null" :quizId = "quizId"/>
+            <audio-recorder v-if="quizId != null" :quizId = "quizId" />
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
   import { onMounted, ref } from 'vue'
+  import FetchAudio from './FetchAudio.vue';
+  import AudioRecorder from './AudioRecorder.vue';
   const BaseUrl = "	https://mock.apifox.cn/m1/2536058-0-default/quiz/fetch"
   const question = ref<string>("")
+  const quizId = ref<string | null>(null)
   const fetch_question = ()=>{
     fetch(BaseUrl,{method :"POST"})
       .then(function (reps){
@@ -23,6 +28,7 @@
         .then((value:{content:{left:number,right:number,signal:string},quiz_id:string}) =>{
           console.log(value);
           question.value = `${value.content.left}${value.content.signal}${value.content.right}`
+          quizId.value = value.quiz_id;
         })
       })
   }
